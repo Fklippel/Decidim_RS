@@ -1,0 +1,55 @@
+services:
+  app:
+    build: .
+    volumes:
+      - .:/code
+      - bundle:/usr/local/bundle
+      - node_modules:/app/node_modules
+    environment:
+      - PORT=3000
+      - DATABASE_HOST=pg
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pg
+      - redis
+
+  worker:
+    build: .
+    volumes:
+      - .:/code
+      - bundle:/usr/local/bundle
+    environment:
+      - DATABASE_HOST=pg
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - pg
+      - redis
+    command: bundle exec sidekiq
+
+  pg:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=decidim_development
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/data
+
+volumes:
+  bundle:
+  node_modules:
+  pg-data:
+  redis-data:
