@@ -47,108 +47,26 @@ Decidim.configure do |config|
   config.page_blocks = Rails.application.secrets.decidim[:page_blocks].presence || %w(terms-of-service)
 
   # Map and Geocoder configuration
-  #
-  # See Decidim docs at https://docs.decidim.org/en/develop/services/maps.html
-  # for more information about how it works and how to set it up.
-  #
-  # == HERE Maps ==
-  # config.maps = {
-  #   provider: :here,
-  #   api_key: Rails.application.secrets.maps[:api_key],
-  #   static: { url: "https://image.maps.hereapi.com/mia/v3/base/mc/overlay" }
-  # }
-  #
-  # == OpenStreetMap (OSM) services ==
-  # To use the OSM map service providers, you will need a service provider for
-  # the following map servers or host all of them yourself:
-  # - A tile server for the dynamic maps
-  #   (https://wiki.openstreetmap.org/wiki/Tile_servers)
-  # - A Nominatim geocoding server for the geocoding functionality
-  #   (https://wiki.openstreetmap.org/wiki/Nominatim)
-  # - A static map server for static map images
-  #   (https://github.com/jperelli/osm-static-maps)
-  #
-  # When used, please read carefully the terms of service for your service
-  # provider.
-  #
-  # config.maps = {
-  #   provider: :osm,
-  #   api_key: Rails.application.secrets.maps[:api_key],
-  #   dynamic: {
-  #     tile_layer: {
-  #       url: "https://tiles.example.org/{z}/{x}/{y}.png?key={apiKey}&{foo}",
-  #       api_key: true,
-  #       foo: "bar=baz",
-  #       attribution: %(
-  #         <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a> contributors
-  #       ).strip
-  #       # Translatable attribution:
-  #       # attribution: -> { I18n.t("tile_layer_attribution") }
-  #     }
-  #   },
-  #   static: { url: "https://staticmap.example.org/" },
-  #   geocoding: { host: "nominatim.example.org", use_https: true }
-  # }
-  #
-  # == Combination (OpenStreetMap default + HERE Maps dynamic map tiles) ==
-  # config.maps = {
-  #   provider: :osm,
-  #   api_key: Rails.application.secrets.maps[:api_key],
-  #   dynamic: {
-  #     provider: :here,
-  #     api_key: Rails.application.secrets.maps[:here_api_key]
-  #   },
-  #   static: { url: "https://staticmap.example.org/" },
-  #   geocoding: { host: "nominatim.example.org", use_https: true }
-  # }
-
-  # Geocoder configurations if you want to customize the default geocoding
-  # settings. The maps configuration will manage which geocoding service to use,
-  # so that does not need any additional configuration here. Use this only for
-  # the global geocoder preferences.
-  # config.geocoder = {
-  #   # geocoding service request timeout, in seconds (default 3):
-  #   timeout: 5,
-  #   # set default units to kilometers:
-  #   units: :km,
-  #   # caching (see https://github.com/alexreisner/geocoder#caching for details):
-  #   cache: Redis.new,
-  #   cache_prefix: "..."
-  # }
-  if Rails.application.secrets.maps.present? && Rails.application.secrets.maps[:static_provider].present?
-    static_provider = Rails.application.secrets.maps[:static_provider]
-    dynamic_provider = Rails.application.secrets.maps[:dynamic_provider]
-    dynamic_url = Rails.application.secrets.maps[:dynamic_url]
-    static_url = Rails.application.secrets.maps[:static_url]
-    static_url = "https://image.maps.hereapi.com/mia/v3/base/mc/overlay" if static_provider == "here"
-    config.maps = {
-      provider: static_provider,
-      api_key: Rails.application.secrets.maps[:static_api_key],
-      static: { url: static_url },
-      dynamic: {
-        provider: dynamic_provider,
-        api_key: Rails.application.secrets.maps[:dynamic_api_key]
+  config.maps = {
+    provider: :leaflet,
+    options: {
+      tile_layer: {
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        options: {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          max_zoom: 19
+        }
       }
     }
-    config.maps[:geocoding] = { host: Rails.application.secrets.maps[:geocoding_host], use_https: true } if Rails.application.secrets.maps[:geocoding_host]
-    config.maps[:dynamic][:tile_layer] = {}
-    config.maps[:dynamic][:tile_layer][:url] = dynamic_url if dynamic_url
-    config.maps[:dynamic][:tile_layer][:attribution] = Rails.application.secrets.maps[:attribution] if Rails.application.secrets.maps[:attribution]
-    if Rails.application.secrets.maps[:extra_vars].present?
-      vars = URI.decode_www_form(Rails.application.secrets.maps[:extra_vars])
-      vars.each do |key, value|
-        # perform a naive type conversion
-        config.maps[:dynamic][:tile_layer][key] = case value
-                                                  when /^true$|^false$/i
-                                                    value.downcase == "true"
-                                                  when /\A[-+]?\d+\z/
-                                                    value.to_i
-                                                  else
-                                                    value
-                                                  end
-      end
-    end
-  end
+  }
+
+  config.geocoder = {
+    provider: :nominatim,
+    options: {
+      units: :km,
+      key: nil   
+    }
+  }
 
   # Custom resource reference generator method. Check the docs for more info.
   # config.reference_generator = lambda do |resource, component|
