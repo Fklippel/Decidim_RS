@@ -6,8 +6,8 @@ ruby RUBY_VERSION
 
 gem "decidim", "0.30.9"
 gem "sidekiq"
-gem "sentry-ruby"
-gem "sentry-rails"
+# gem "sentry-ruby"
+# gem "sentry-rails"
 gem "geocoder"
 # gem "decidim-ai", "0.30.9"
 # gem "decidim-conferences", "0.30.9"

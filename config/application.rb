@@ -17,7 +17,7 @@ module DecidimApp
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
-    config.hosts << "decidim.lad.pucrs.br"
+    config.hosts << "10.32.45.38:3001"
 
     config.time_zone = "America/Sao_Paulo"
 
