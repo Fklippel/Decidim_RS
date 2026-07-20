@@ -372,25 +372,33 @@ end
 
 if Decidim.module_installed? :initiatives
   Decidim::Initiatives.configure do |config|
-    unless Rails.application.secrets.dig(:decidim, :initiatives, :creation_enabled) == "auto"
-      config.creation_enabled = Rails.application.secrets.dig(:decidim, :initiatives, :creation_enabled).present?
-    end
-    config.minimum_committee_members = Rails.application.secrets.dig(:decidim, :initiatives, :minimum_committee_members).presence || 2
-    config.default_signature_time_period_length = Rails.application.secrets.dig(:decidim, :initiatives, :default_signature_time_period_length).presence || 120
-    config.default_components = Rails.application.secrets.dig(:decidim, :initiatives, :default_components)
-    config.first_notification_percentage = Rails.application.secrets.dig(:decidim, :initiatives, :first_notification_percentage).presence || 33
-    config.second_notification_percentage = Rails.application.secrets.dig(:decidim, :initiatives, :second_notification_percentage).presence || 66
-    config.stats_cache_expiration_time = Rails.application.secrets.dig(:decidim, :initiatives, :stats_cache_expiration_time).to_i.minutes
-    config.max_time_in_validating_state = Rails.application.secrets.dig(:decidim, :initiatives, :max_time_in_validating_state).to_i.days
-    unless Rails.application.secrets.dig(:decidim, :initiatives, :print_enabled) == "auto"
-      config.print_enabled = Rails.application.secrets.dig(:decidim, :initiatives, :print_enabled).present?
-    end
-    config.do_not_require_authorization = Rails.application.secrets.dig(:decidim, :initiatives, :do_not_require_authorization).present?
+    config.creation_enabled = true
+    config.similarity_threshold = 0.25
+    config.similarity_limit = 5
+    config.minimum_committee_members = 2
+    config.default_signature_time_period_length = 120
+    config.default_components = [:pages, :meetings]
+    config.first_notification_percentage = 33
+    config.second_notification_percentage = 66
+    config.stats_cache_expiration_time = 5.minutes
+    config.max_time_in_validating_state = 60.days
+    config.print_enabled = true
+    
+    config.do_not_require_authorization = false
   end
 end
+
+Rails.application.config.after_initialize do
+  Decidim.menu :account_menu do |menu|
+    menu.add_item :my_custom_initiatives, 
+                  'Minhas Iniciativas', 
+                  '/initiatives?filter%5Bauthor%5D=myself&filter%5Bwith_any_state%5D=', 
+                  position: 3 
+  end
+end
+
 
 Rails.application.config.i18n.available_locales = Decidim.available_locales
 Rails.application.config.i18n.default_locale = Decidim.default_locale
 
-# Inform Decidim about the assets folder
 Decidim.register_assets_path File.expand_path("app/packs", Rails.application.root)
