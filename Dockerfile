@@ -5,4 +5,5 @@ WORKDIR /code
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
+COPY . .
 ENTRYPOINT ["bin/docker-entrypoint"]
