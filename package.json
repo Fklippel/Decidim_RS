@@ -4,7 +4,9 @@
   "dependencies": {
     "@decidim/browserslist-config": "^0.30.9",
     "@decidim/core": "^0.30.9",
-    "@decidim/webpacker": "^0.30.9"
+    "@decidim/webpacker": "^0.30.9",
+    "graphql": "^17.0.2",
+    "uc.micro": "0.1.0"
   },
   "version": "0.1.0",
   "devDependencies": {

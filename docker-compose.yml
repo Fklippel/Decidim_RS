@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    restart: unless-stopped
     env_file:
       - .env
     volumes:
@@ -10,30 +9,25 @@ services:
     environment:
       - PORT=3000
       - DATABASE_HOST=pg
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DECIDIM_DATABASE_NAME=${DECIDIM_DATABASE_NAME}
-      - DATABASE_USERNAME=${DATABASE_USERNAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - RAILS_ENV=production
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-postgres}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
+      - RAILS_ENV=development
       - REDIS_URL=redis://redis:6379
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - pg
       - redis
 
   worker:
     build: .
-    restart: unless-stopped
     volumes:
       - .:/code
     environment:
       - DATABASE_HOST=pg
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DECIDIM_DATABASE_NAME=${DECIDIM_DATABASE_NAME}
-      - DATABASE_USERNAME=${DATABASE_USERNAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - RAILS_ENV=production
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-postgres}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
+      - RAILS_ENV=development
       - REDIS_URL=redis://redis:6379
     depends_on:
       - pg
@@ -42,17 +36,15 @@ services:
 
   pg:
     image: postgres:16
-    restart: unless-stopped
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=decidim_production
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-decidim_development}
     volumes:
       - pg-data:/var/lib/postgresql/data
 
   redis:
     image: redis
-    restart: unless-stopped
     volumes:
       - redis-data:/data
 

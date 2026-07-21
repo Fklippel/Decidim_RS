@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+if [ "$RAILS_ENV" = "development" ]; then
+  yarn install --ignore-engines
+  bundle exec rails db:prepare
+fi
+
+if [ "$#" -eq 0 ]; then
+  set -- bundle exec rails s -b 0.0.0.0
+fi
+
+exec "$@"
