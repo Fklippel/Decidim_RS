@@ -18,6 +18,8 @@ module DecidimApp
     config.load_defaults 6.1
 
     config.hosts << "10.32.45.38:3001"
+    config.hosts << "decidim.lad.pucrs.br"
+    config.hosts << "localhost"
 
     config.time_zone = "America/Sao_Paulo"
 
