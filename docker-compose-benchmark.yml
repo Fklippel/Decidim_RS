@@ -1,0 +1,21 @@
+services:
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - ./k6:/scripts 
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write # sends the metrics via remote-write to prometheus when running the experiment
+    command: run --out experimental-prometheus-rw /scripts/scenarios/mixed_load.js
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml' # where is the configuration file
+      - '--web.enable-remote-write-receiver' # recives the metrics k6 is sending 
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes: 
+      - ./grafana/provisioning:/etc/grafana/provisioning
