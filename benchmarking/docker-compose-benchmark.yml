@@ -5,7 +5,7 @@ services:
       - ./k6:/scripts 
     environment:
       - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write # sends the metrics via remote-write to prometheus when running the experiment
-    command: run --out experimental-prometheus-rw /scripts/scenarios/mixed_load.js
+    command: run --out experimental-prometheus-rw /scripts/scenarios/constant-vus.js
 
   prometheus:
     image: prom/prometheus:latest
@@ -19,3 +19,12 @@ services:
     image: grafana/grafana:latest
     volumes: 
       - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3001:3000"
+    networks:
+      - default
+
+networks:
+  app-net:
+    name: decidim_rs_default
+    external: true
