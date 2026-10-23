@@ -59,3 +59,5 @@ tailwind.config.js
 .envrc
 .rbenv-vars
 benchmarking/
+deploy_key.pub
+deploy_key

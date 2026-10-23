@@ -1,0 +1,24 @@
+pt:
+  decidim:
+    help:
+      main_topic:
+        title: "Geral"
+    pages:
+      home:
+        footer_sub_hero:
+          footer_sub_hero_body_html: "Vamos construir uma sociedade mais aberta, transparente e colaborativa.<br /> Junte-se a nós, participe e decida."
+    participatory_processes:
+      pages:
+        home:
+          highlighted_processes:
+            active_spaces: "Processos ativos"
+            see_all_spaces: "Ver todos os processos"
+
+  layouts:
+    decidim:
+      footer:
+        terms_of_service: "Termos de Uso"
+        resources: "Recursos"
+        open_data: "Informação pública"
+        help: "Ajuda"
+        sign_up: "Criar uma conta"
