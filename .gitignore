@@ -58,3 +58,4 @@ tailwind.config.js
 !.env.example
 .envrc
 .rbenv-vars
+benchmarking/
